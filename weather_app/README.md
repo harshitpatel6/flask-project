@@ -42,7 +42,3 @@ A beautiful and interactive weather application built with Flask that displays r
 - CSS3 (with animations)
 - JavaScript (ES6+)
 - Python-dotenv for environment variables
-
-## Note
-
-Make sure to keep your API key secure and never commit it to version control. 
