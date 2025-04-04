@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Weather App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="weather-card">
+            <div class="weather-header">
+                <h1>Weather App</h1>
+                <form id="weather-form">
+                    <input type="text" id="city-input" placeholder="Enter city name" required>
+                    <button type="submit">Get Weather</button>
+                </form>
+            </div>
+            
+            <div class="weather-content" id="weather-content">
+                <div class="weather-icon">
+                    <div class="sun"></div>
+                </div>
+                <div class="weather-info">
+                    <h2 class="temperature">--°C</h2>
+                    <p class="description">Enter a city to get weather information</p>
+                    <div class="details">
+                        <div class="humidity">
+                            <span>Humidity:</span>
+                            <span class="humidity-value">--%</span>
+                        </div>
+                        <div class="wind">
+                            <span>Wind Speed:</span>
+                            <span class="wind-value">-- m/s</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html> 
