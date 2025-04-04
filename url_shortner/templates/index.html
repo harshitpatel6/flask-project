@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">URL Shortener</h1>
+            
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <form method="POST" class="space-y-4">
+                    <div>
+                        <label for="url" class="block text-sm font-medium text-gray-700">Enter your URL:</label>
+                        <input type="url" name="url" id="url" required
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                               placeholder="https://example.com">
+                    </div>
+                    <button type="submit"
+                            class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Shorten URL
+                    </button>
+                </form>
+
+                {% if error %}
+                <div class="mt-4 p-4 bg-red-100 text-red-700 rounded-md">
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                {% if short_url %}
+                <div class="mt-6">
+                    <h2 class="text-lg font-medium text-gray-900 mb-2">Your shortened URL:</h2>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" value="{{ short_url }}" readonly
+                               class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        <button onclick="copyToClipboard('{{ short_url }}')"
+                                class="bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- URL Statistics -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Recent URLs</h2>
+                <div id="urlList" class="space-y-4">
+                    <!-- URLs will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('URL copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+
+        // Load URL statistics
+        async function loadUrls() {
+            try {
+                const response = await fetch('/api/urls');
+                const urls = await response.json();
+                const urlList = document.getElementById('urlList');
+                urlList.innerHTML = urls.map(url => `
+                    <div class="border-b border-gray-200 pb-4">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-500">Original URL:</p>
+                                <p class="text-gray-900 truncate">${url.original_url}</p>
+                                <p class="text-sm text-gray-500 mt-2">Short URL:</p>
+                                <p class="text-blue-600">${window.location.origin}/${url.short_code}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-500">Clicks</p>
+                                <p class="text-lg font-semibold">${url.clicks}</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Created: ${url.created_at}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading URLs:', error);
+            }
+        }
+
+        // Load URLs when page loads
+        document.addEventListener('DOMContentLoaded', loadUrls);
+        // Reload URLs every 30 seconds
+        setInterval(loadUrls, 30000);
+    </script>
+</body>
+</html> 
